@@ -6,6 +6,23 @@ const BR = document.createElement('br');
 const PLAYGROUND = document.getElementById('playground')
 const RESULT = document.getElementById('result')
 
+const PLAYER_ONE_SCORE = document.getElementById('player-one-score');
+const PLAYER_TWO_SCORE = document.getElementById('player-two-score');
+const FINAL_RESULT = document.getElementById('final-result');
+
+const PLAYER_ONE_PSEUDO_INPUT = document.getElementById('player-one-pseudo');
+const PLAYER_TWO_PSEUDO_INPUT = document.getElementById('player-two-pseudo');
+
+let playerOneName = PLAYER_ONE_PSEUDO_INPUT.innerText === "" ? "Player One" : PLAYER_ONE_PSEUDO_INPUT.innerText;
+let playerTwoName = PLAYER_TWO_PSEUDO_INPUT.innerText === "" ? "Player One" : PLAYER_TWO_PSEUDO_INPUT.innerText;
+
+let pOnePseudo = document.getElementById('display-pseudo-one');
+let pTwoPseudo = document.getElementById('display-pseudo-two');
+
+PLAYER_ONE_SCORE.innerText = PLAYER_ONE_SCORE.innerText === "" ? 0 : parseInt(PLAYER_ONE_SCORE.innerText) ;
+PLAYER_TWO_SCORE.innerText = PLAYER_TWO_SCORE.innerText === "" ? 0 : parseInt(PLAYER_TWO_SCORE.innerText) ;
+FINAL_RESULT.innerText = FINAL_RESULT.innerText === "" ? "No result yet !!!" : FINAL_RESULT.innerText;
+
 let cases = new Array(ROW).fill(null).map(() => new Array(COLUMN).fill(null));
 let numberCasePlayerOne = 0;
 let numberCasePlayerTwo = 0;
@@ -58,14 +75,14 @@ const checkAlignPion = () => {
 
         if (equals(Row)) {
             hasWinner = true;
-            winner = Row[0] === firstPlayerIndicator ? "Player one" : "Player two";
+            winner = Row[0] === firstPlayerIndicator ? playerOneName : playerTwoName;
             break;
         }
 
         if (equals(Col)) {
             hasWinner = true;
             console.log(Col);
-            winner = Col[0] === firstPlayerIndicator ? "Player one" : "Player two";
+            winner = Col[0] === firstPlayerIndicator ? playerOneName : playerTwoName;
             break;
         }
     }
@@ -82,11 +99,15 @@ const checkAlignPion = () => {
 }
 
 const getPlayerName = (pion) => {
-    return pion === firstPlayerIndicator ? "Player one" : "Player two";
+    return pion === firstPlayerIndicator ? playerOneName : playerTwoName;
 }
 
 const showWinner = (winnerName) => {
     RESULT.innerText = `${winnerName} win`;
+    if (winnerName === playerOneName) PLAYER_ONE_SCORE.innerText = (parseInt(PLAYER_ONE_SCORE.innerText) + 1).toString(); 
+    else if (winnerName === playerTwoName) PLAYER_TWO_SCORE.innerText = (parseInt(PLAYER_TWO_SCORE.innerText) + 1).toString();
+    else throw new Error(`Player name must be ${playerOneName} OR ${playerTwoName}`);
+    checkFinalResult();
     blockPlayground(cases);
 }
 
@@ -96,6 +117,13 @@ const blockPlayground = (cases) => {
             cases[i][j].classList.add('disabled');
         }
     }
+}
+
+const checkFinalResult = () => {
+    if (parseInt(PLAYER_ONE_SCORE.innerText) > parseInt(PLAYER_TWO_SCORE.innerText)) FINAL_RESULT.innerText = `${playerOneName} WIN !!!`
+    else if (parseInt(PLAYER_ONE_SCORE.innerText) < parseInt(PLAYER_TWO_SCORE.innerText)) FINAL_RESULT.innerText = `${playerTwoName} WIN !!!`
+    else if (parseInt(PLAYER_ONE_SCORE.innerText) === parseInt(PLAYER_TWO_SCORE.innerText)) FINAL_RESULT.innerText = `Match equal !!!`
+    else throw new Error("Final result check fail, Score error");
 }
 
 const getPlayGroundData = (array) => {
@@ -173,14 +201,41 @@ const generateAll = () => {
     generatePlayGroundEvent();
 }
 
-document.getElementById('reset-btn').addEventListener('click', (e) => {
+document.getElementById('reset-game').addEventListener('click', (e) => {
     e.preventDefault();
     if (numberCasePlayerOne > 0 || numberCasePlayerTwo > 0) {
         resetPlayGround();
     }
 })
 
+document.getElementById('reset-score').addEventListener('click', (e) => {
+    e.preventDefault();
+    PLAYER_ONE_SCORE.innerText = (0).toString();
+    PLAYER_TWO_SCORE.innerText = (0).toString();
+    FINAL_RESULT.innerText = "No result yet !!!";
+})
+
 window.addEventListener('load', (e) => {
     e.preventDefault();
     generateAll();
+    updateDisplayPseudo();
 })
+
+document.getElementById('save-pseudo').addEventListener('click', (e) => {
+    e.preventDefault();
+    if (PLAYER_ONE_PSEUDO_INPUT.value !== "") playerOneName = PLAYER_ONE_PSEUDO_INPUT.value;
+    if (PLAYER_TWO_PSEUDO_INPUT.value !== "") playerTwoName = PLAYER_TWO_PSEUDO_INPUT.value;
+    if (playerOneName === playerTwoName && playerOneName !== "") {
+        alert("The two player can't have the same pseudo");
+        PLAYER_ONE_PSEUDO_INPUT.value = "";
+        PLAYER_TWO_PSEUDO_INPUT.value = "";
+        playerOneName = "Player One";
+        playerTwoName = "Player Two";
+    }
+    updateDisplayPseudo();
+})
+
+const updateDisplayPseudo = () => {
+    pOnePseudo.innerText = playerOneName;
+    pTwoPseudo.innerText = playerTwoName;
+}
