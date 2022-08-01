@@ -1,7 +1,9 @@
 const ROW = 3;
 const COLUMN = 3;
-const firstPlayerIndicator = "0";
-const secondPlayerIndicator = "1";
+
+let firstPlayerIndicator = "0";
+let secondPlayerIndicator = "1";
+
 const BR = document.createElement('br');
 const PLAYGROUND = document.getElementById('playground')
 const RESULT = document.getElementById('result')
@@ -12,6 +14,9 @@ const FINAL_RESULT = document.getElementById('final-result');
 
 const PLAYER_ONE_PSEUDO_INPUT = document.getElementById('player-one-pseudo');
 const PLAYER_TWO_PSEUDO_INPUT = document.getElementById('player-two-pseudo');
+
+const PLAYER_ONE_INDICATOR_INPUT = document.getElementById('player-one-indicator');
+const PLAYER_TWO_INDICATOR_INPUT = document.getElementById('player-two-indicator');
 
 let playerOneName = PLAYER_ONE_PSEUDO_INPUT.innerText === "" ? "Player One" : PLAYER_ONE_PSEUDO_INPUT.innerText;
 let playerTwoName = PLAYER_TWO_PSEUDO_INPUT.innerText === "" ? "Player One" : PLAYER_TWO_PSEUDO_INPUT.innerText;
@@ -233,6 +238,21 @@ document.getElementById('save-pseudo').addEventListener('click', (e) => {
         playerTwoName = "Player Two";
     }
     updateDisplayPseudo();
+})
+
+document.getElementById('save-indicator').addEventListener('click', (e) => {
+    e.preventDefault();
+    if (PLAYER_ONE_INDICATOR_INPUT.value !== "") firstPlayerIndicator = PLAYER_ONE_INDICATOR_INPUT.value;
+    if (PLAYER_TWO_INDICATOR_INPUT.value !== "") secondPlayerIndicator = PLAYER_TWO_INDICATOR_INPUT.value;
+
+    if (firstPlayerIndicator === secondPlayerIndicator && firstPlayerIndicator !== "") {
+        alert("The two player can't have the same indicator");
+        PLAYER_ONE_INDICATOR_INPUT.value = "";
+        PLAYER_TWO_INDICATOR_INPUT.value = "";
+        firstPlayerIndicator = "0";
+        secondPlayerIndicator = "1";
+    }
+    pion = firstPlayerIndicator;
 })
 
 const updateDisplayPseudo = () => {
